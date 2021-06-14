@@ -1,2 +1,2 @@
 # engine
-a framework based on raylib (WIP)
+a framework based on [raylib](https://www.raylib.com/) (WIP)
