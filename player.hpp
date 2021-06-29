@@ -18,7 +18,7 @@
     //the idea here is that its a fraction instead of actual hitpoints
       bool MoveTo(bool barrier[globals::ARRAYSIZE][globals::ARRAYSIZE],double x,double y){
         double xbottom = x + size;
-        double ybottom;
+        double ybottom = y + size;
         if(x >= globals::ARRAYSIZE || y >= globals::ARRAYSIZE) return false;
         if(y <= 0 || x <= 0) return false;
         if(barrier[int(x)][int(y)]) return false;
