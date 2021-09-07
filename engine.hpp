@@ -3,7 +3,7 @@
 
 #include "arrays.hpp"
 #include "player.hpp"
-#include "game_array.hpp"
 #include "attacks.hpp"
+#include "game_array.hpp"
 
 #endif
