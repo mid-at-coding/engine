@@ -24,6 +24,17 @@ struct pointbool{
   point pos;
   bool isInArr;
 };
+double round(double var)
+{
+    // from 
+    // https://www.geeksforgeeks.org/rounding-floating-point-number-two-decimal-places-c-c/
+    // 37.66666 * 100 =3766.66
+    // 3766.66 + .5 =3767.16    for rounding off value
+    // then type cast to int so value is 3767
+    // then divided by 100 so the value converted into 37.67
+    double value = (int)(var * 100 + .5);
+    return (float)value / 100;
+}
 namespace globals{
     enum dir {
       up,
@@ -44,7 +55,7 @@ namespace globals{
 }
 bool MoveTo(bool barrier[globals::ARRAYSIZE][globals::ARRAYSIZE],double x,double y,int size = 0){
   double xbottom = x + size;
-  double ybottom;
+  double ybottom = y + size;
   if(x >= globals::ARRAYSIZE || y >= globals::ARRAYSIZE) return false;
   if(y <= 0 || x <= 0) return false;
   if(barrier[int(x)][int(y)]) return false;
