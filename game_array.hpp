@@ -226,11 +226,12 @@ namespace cattoEngine{
       }
       entity[player.x][player.y] = PLAYER;
     }
-    void RenderArr(bool debug = false){
+    void RenderArr(Texture2D playertext , Texture2D boardtext , vector<attack*> currentAttacks , bool debug = false) {
       float Temp1;
       float Temp2;
       float CellSize = globals::screenHeight / globals::ARRAYSIZE;
       Color colour;
+      // no comments cause im lazy
       for(int x = 0; x < globals::ARRAYSIZE; x++){
           Temp1 = CellSize * x;
           for(int y = 0; y < globals::ARRAYSIZE; y++){
@@ -241,16 +242,47 @@ namespace cattoEngine{
             else{
               colour = globals::BACKGROUND;
             }
-            DrawRectangle(Temp1,Temp2,CellSize,CellSize,colour);
+            DrawTexturePro(
+                boardtext ,
+                { 0 , 0 , 16 , 16 },
+                { Temp1 , Temp2 + 20, CellSize , CellSize },
+                { 0 , 0 },
+                0,
+                colour
+            );
             if(debug){
               string debugout = to_string(x) + "," + to_string(y);
               DrawText(debugout.c_str(),Temp1,Temp2, 20, LIGHTGRAY);
             }
           }
-          DrawRectangle(character.pos.x * CellSize,character.pos.y * CellSize,character.size * CellSize,character.size * CellSize,globals::PLAYERCOLOR);
+          for (int i = 0; i < currentAttacks.size(); i++) {
+              DrawRectangle(
+                  (*currentAttacks[i]).pos.x * CellSize ,
+                  (*currentAttacks[i]).pos.y * CellSize + 20,
+                  (*currentAttacks[i]).size * CellSize ,
+                  (*currentAttacks[i]).size * CellSize ,
+                  BLACK
+              );
+              if (debug) {
+                  cout << "X : " << (*currentAttacks[i]).pos.x * CellSize << endl;
+                  cout << "Y :" << (*currentAttacks[i]).pos.y * CellSize + 20 << endl;
+                  cout << "Width : " << (*currentAttacks[i]).size * CellSize << endl;
+                  cout << "Height : " << (*currentAttacks[i]).size * CellSize << endl;
+              }
+          }
+          DrawTexturePro(
+              playertext,
+              { 0 , 0 , 16 , 16 },
+              { (float)character.pos.x * CellSize, (float)character.pos.y * CellSize + 20, character.size * CellSize , character.size * CellSize },
+              { 0 , 0 },
+              0,
+              colour
+          );
+          // add 20 pixels because the top is chopped off and im too lazy to find the cause
       }
     }
     void UpdateLogic(){
+      double dt = GetFrameTime();
       if(oci){
         oci = false;
       }
@@ -275,59 +307,59 @@ namespace cattoEngine{
         //6 - down and right
         //7 - down and left
     case globals::up :
-          if(character.MoveTo(barrier,character.pos.x,character.pos.y - 0.5)){
-            character.pos.y -= character.speed;
-            character.bottomright.y -= character.speed;
+          if(character.MoveTo(barrier,character.pos.x,character.pos.y - character.speed * dt)){
+            character.pos.y -= character.speed * dt;
+            character.bottomright.y -= character.speed * dt;
           }
           break;
       case globals::right :
-          if(character.MoveTo(barrier,character.pos.x + 0.5,character.pos.y)){
-            character.pos.x += character.speed;
-            character.bottomright.y += character.speed;
+          if(character.MoveTo(barrier,character.pos.x + character.speed * dt,character.pos.y)){
+            character.pos.x += character.speed * dt;
+            character.bottomright.y += character.speed * dt;
           }
           break;
       case globals::down :
-          if(character.MoveTo(barrier,character.pos.x,character.pos.y + 0.5)){
-            character.pos.y += character.speed;
-            character.bottomright.y += character.speed;
+          if(character.MoveTo(barrier,character.pos.x,character.pos.y + character.speed * dt)){
+            character.pos.y += character.speed * dt;
+            character.bottomright.y += character.speed * dt;
           }
           break;
       case globals::left :
-          if(character.MoveTo(barrier,character.pos.x - 0.5,character.pos.y)){
-            character.pos.x -= character.speed;
-            character.bottomright.x -= character.speed;
+          if(character.MoveTo(barrier,character.pos.x - character.speed * dt,character.pos.y)){
+            character.pos.x -= character.speed * dt;
+            character.bottomright.x -= character.speed * dt;
           }
           break;
       case globals::up_right :
-          if(character.MoveTo(barrier,character.pos.x + 0.25,character.pos.y - 0.25)){
-            character.pos.x += character.diagspeed;
-            character.pos.y -= character.diagspeed;
-            character.bottomright.x += character.diagspeed;
-            character.bottomright.y -= character.diagspeed;
+          if(character.MoveTo(barrier,character.pos.x + character.diagspeed * dt,character.pos.y - character.diagspeed * dt)){
+            character.pos.x += character.diagspeed * dt;
+            character.pos.y -= character.diagspeed * dt;
+            character.bottomright.x += character.diagspeed * dt;
+            character.bottomright.y -= character.diagspeed * dt;
           }
           break;
       case globals::up_left :
-          if(character.MoveTo(barrier,character.pos.x - 0.25,character.pos.y - 0.25)){
-            character.pos.x -= character.diagspeed;
-            character.pos.y -= character.diagspeed;
-            character.bottomright.x -= character.diagspeed;
-            character.bottomright.y -= character.diagspeed;
+          if(character.MoveTo(barrier,character.pos.x - character.diagspeed * dt,character.pos.y - character.diagspeed * dt)){
+            character.pos.x -= character.diagspeed * dt;
+            character.pos.y -= character.diagspeed * dt;
+            character.bottomright.x -= character.diagspeed * dt;
+            character.bottomright.y -= character.diagspeed * dt;
           }
           break;
       case globals::down_right :
-          if(character.MoveTo(barrier,character.pos.x + 0.25,character.pos.y + 0.25)){
-            character.pos.x += character.diagspeed;
-            character.pos.y += character.diagspeed;
-            character.bottomright.x += character.diagspeed;
-            character.bottomright.y += character.diagspeed;
+          if(character.MoveTo(barrier,character.pos.x + character.diagspeed * dt,character.pos.y + character.diagspeed * dt)){
+            character.pos.x += character.diagspeed * dt;
+            character.pos.y += character.diagspeed * dt;
+            character.bottomright.x += character.diagspeed * dt;
+            character.bottomright.y += character.diagspeed * dt;
           }
           break;
       case globals::down_left :
-          if(character.MoveTo(barrier,character.pos.x - 0.25,character.pos.y + 0.25)){
-            character.pos.x -= 0.25;
-            character.pos.y += 0.25;
-            character.bottomright.x -= character.diagspeed;
-            character.bottomright.y += character.diagspeed;
+          if(character.MoveTo(barrier,character.pos.x - character.diagspeed * dt, character.pos.y + character.diagspeed * dt)){
+            character.pos.x -= character.diagspeed * dt;
+            character.pos.y += character.diagspeed * dt;
+            character.bottomright.x -= character.diagspeed * dt;
+            character.bottomright.y += character.diagspeed * dt;
           }
           break;
           entity[int(character.pos.x)][int(character.pos.y)] = PLAYER;
